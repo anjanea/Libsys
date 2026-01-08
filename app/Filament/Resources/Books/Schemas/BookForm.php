@@ -25,10 +25,10 @@ class BookForm
                 TextInput::make('isbn')
                     ->unique(ignoreRecord: true),
 
-                Select::make('categories')
-                    ->relationship('categories', 'name')
-                    ->multiple()
-                    ->preload(),
+                Select::make('category_id')
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->required(),
 
                 TextInput::make('publisher'),
 
@@ -40,6 +40,7 @@ class BookForm
                 Textarea::make('description'),
 
                 FileUpload::make('cover_path')
+                    ->disk('public')
                     ->directory('books/covers')
                     ->image(),
 

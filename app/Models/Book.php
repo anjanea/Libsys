@@ -31,9 +31,9 @@ class Book extends Model
         'is_active' => 'boolean',
     ];
 
-    public function categories()
+    public function category()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function loans()
