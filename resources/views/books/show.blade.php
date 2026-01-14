@@ -151,18 +151,6 @@
                         {{ $userReview ? 'Edit Ulasan Anda' : 'Tulis Ulasan' }}
                     </h4>
 
-                    <!-- Alert Flash Message -->
-                    @if(session('error'))
-                    <div class="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
-                        {{ session('error') }}
-                    </div>
-                    @endif
-                    @if(session('status'))
-                    <div class="mb-4 p-3 bg-green-100 text-green-700 rounded-lg text-sm">
-                        {{ session('status') }}
-                    </div>
-                    @endif
-
                     <form action="{{ route('reviews.store', $book->id) }}" method="POST">
                         @csrf
 
