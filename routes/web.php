@@ -9,6 +9,8 @@ use App\Models\Controllers\BookController;
 use App\Models\Controllers\LoanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\HomeController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,6 +25,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 require __DIR__ . '/auth.php';
 
@@ -48,4 +52,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/books/{book}/review', [ReviewController::class, 'store'])
         ->name('reviews.store');
+
+    Route::post('/books/{book}/borrow', [ControllersLoanController::class, 'borrow'])->name('books.borrow');
 });

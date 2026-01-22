@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LoanController extends Controller
 {
@@ -30,75 +31,71 @@ class LoanController extends Controller
         return view('loans.index', compact('activeLoans', 'loanHistory'));
     }
 
-    public function store(Request $request)
+    public function borrow(Book $book)
     {
-        $request->validate([
-            'book_id' => 'required|exists:books,id',
-        ]);
-
         $user = Auth::user();
-        $book = Book::findOrFail($request->book_id);
 
-        // 1️⃣ Ensure only members can borrow
-        if ($user->role !== 'member') {
-            return back()->with('error', 'Only members can borrow books.');
+        // 1. Validasi Stok
+        if ($book->available_copies <= 0) {
+            return back()->with('error', 'Maaf, stok buku ini sedang habis.');
         }
 
-        // 2️⃣ Max 3 active loans
+        // 2. Batasi maksimal 3 peminjaman aktif
         $activeLoansCount = Loan::where('user_id', $user->id)
             ->where('status', 'borrowed')
             ->count();
 
         if ($activeLoansCount >= 3) {
-            return back()->with('error', 'You can only borrow up to 3 books at a time.');
+            return back()->with('error', 'Kamu sudah meminjam 3 buku. Kembalikan buku lama terlebih dahulu.');
         }
 
-        // 3️⃣ Prevent borrowing the same book twice
+        // 3. Cek apakah user sudah meminjam buku yang sama
         $alreadyBorrowed = Loan::where('user_id', $user->id)
             ->where('book_id', $book->id)
             ->where('status', 'borrowed')
             ->exists();
 
         if ($alreadyBorrowed) {
-            return back()->with('error', 'You have already borrowed this book.');
+            return back()->with('error', 'Kamu sedang meminjam buku ini.');
         }
 
-        // 4️⃣ Check availability
-        if ($book->available_copies < 1) {
-            return back()->with('error', 'No copies available for this book.');
+        // 4. Proses Transaksi
+        try {
+            DB::transaction(function () use ($book, $user) {
+                Loan::create([
+                    'user_id' => $user->id, // Menggunakan variabel $user yang sudah kita ambil di atas
+                    'book_id' => $book->id,
+                    'borrow_date' => now(),
+                    'due_date' => now()->addDays(14),
+                    'status' => 'borrowed',
+                    'fine' => 0,
+                ]);
+
+                $book->decrement('available_copies');
+            });
+
+            return back()->with('success', 'Buku berhasil dipinjam! Cek menu Loans untuk melihat daftar pinjamanmu.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
         }
-
-        // 5️⃣ Create loan
-        Loan::create([
-            'user_id' => $user->id,
-            'book_id' => $book->id,
-            'borrow_date' => now(),
-            'due_date' => now()->addDays(14),
-            'returned_at' => null,
-            'status' => 'borrowed',
-            'fine' => 0,
-        ]);
-
-        // 6️⃣ Decrease available copies
-        $book->decrement('available_copies');
-
-        return back()->with('success', 'Book borrowed successfully!');
     }
 
     public function returnBook($id)
     {
         $loan = Loan::where('id', $id)
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->where('status', 'borrowed')
             ->firstOrFail();
 
-        $loan->update([
-            'returned_at' => now(),
-            'status' => 'returned',
-        ]);
+        DB::transaction(function () use ($loan) {
+            $loan->update([
+                'returned_at' => now(),
+                'status' => 'returned',
+            ]);
 
-        $loan->book->increment('available_copies');
+            $loan->book->increment('available_copies');
+        });
 
-        return back()->with('success', 'Book returned successfully!');
+        return back()->with('success', 'Buku berhasil dikembalikan!');
     }
 }

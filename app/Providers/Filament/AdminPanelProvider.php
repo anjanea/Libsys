@@ -65,4 +65,6 @@ class AdminPanelProvider extends PanelProvider
     {
         return auth()->user()->role === 'admin';
     }
+
+    
 }

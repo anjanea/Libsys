@@ -8,7 +8,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <!-- 1. Greeting & Search Section -->
             <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h3 class="text-2xl font-bold text-gray-800 dark:text-white">Halo, {{ Auth::user()->name }}! 👋</h3>
@@ -26,9 +25,7 @@
                 </div>
             </div>
 
-            <!-- 2. Stats Grid (Matched with $stats) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <!-- Stat Card: Active Loans -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="p-6">
                         <div class="flex items-center">
@@ -45,7 +42,6 @@
                     </div>
                 </div>
 
-                <!-- Stat Card: Total History -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="p-6">
                         <div class="flex items-center">
@@ -62,7 +58,6 @@
                     </div>
                 </div>
 
-                <!-- Stat Card: Overdue/Fines -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="p-6">
                         <div class="flex items-center">
@@ -80,17 +75,14 @@
                 </div>
             </div>
 
-            <!-- Main Content Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
-                <!-- LEFT COLUMN (2/3 width) -->
                 <div class="lg:col-span-2 space-y-6">
                     
-                    <!-- 3. Active Loans Table -->
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
                         <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                             <h4 class="text-lg font-semibold text-gray-900 dark:text-white">Peminjaman Aktif</h4>
-                            <a href="#" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">Lihat Semua</a>
+                            <a href="{{ route('loans.index') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">Lihat Semua</a>
                         </div>
                         
                         <div class="p-0">
@@ -116,7 +108,6 @@
                                                     $dueDate = \Carbon\Carbon::parse($loan->due_date);
                                                     $daysLeft = now()->diffInDays($dueDate, false);
                                                     
-                                                    // Logic status warna
                                                     if ($daysLeft < 0) {
                                                         $statusClass = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 border-red-200 dark:border-red-800';
                                                         $statusText = 'Terlambat';
@@ -131,12 +122,13 @@
                                                 <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                                                     <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                                         <div class="flex items-center gap-3">
-                                                            <!-- Placeholder Cover jika tidak ada image -->
-                                                            <div class="w-8 h-10 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden shrink-0">
-                                                                @if($loan->book->cover_url)
-                                                                    <img src="{{ asset('storage/' . $book->cover_path) }}" class="w-full h-full object-cover">
+                                                            <div class="w-8 h-10 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden shrink-0 shadow-sm border border-gray-100 dark:border-gray-700">
+                                                                @if($loan->book->cover_path)
+                                                                    <img src="{{ asset('storage/' . $loan->book->cover_path) }}" 
+                                                                         alt="{{ $loan->book->title }}" 
+                                                                         class="w-full h-full object-cover">
                                                                 @else
-                                                                    <div class="flex items-center justify-center h-full text-xs text-gray-500">Img</div>
+                                                                    <div class="flex items-center justify-center h-full text-[10px] text-gray-500">No Img</div>
                                                                 @endif
                                                             </div>
                                                             <span class="line-clamp-1">{{ $loan->book->title }}</span>
@@ -151,7 +143,7 @@
                                                         </span>
                                                     </td>
                                                     <td class="px-6 py-4 text-right">
-                                                        <a href="{{ route('books.show', $loan->book_id) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Detail</a>
+                                                        <a href="{{ route('books.index') }}?search={{ urlencode($loan->book->title) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Detail</a>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -162,17 +154,14 @@
                         </div>
                     </div>
 
-                    <!-- 4. Recommendations (Visual Mockup) -->
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
                         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                             <h4 class="text-lg font-semibold text-gray-900 dark:text-white">Rekomendasi Untuk Anda</h4>
                         </div>
                         <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <!-- Card Statis sebagai Placeholder Layout -->
                             <div class="flex gap-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition cursor-pointer">
-                                <div class="w-16 h-20 bg-gray-300 dark:bg-gray-600 rounded shrink-0 overflow-hidden">
-                                    <!-- Ganti src dengan asset real -->
-                                    <div class="w-full h-full bg-gray-400 flex items-center justify-center text-white text-xs">Cover</div>
+                                <div class="w-16 h-20 bg-gray-300 dark:bg-gray-600 rounded shrink-0 overflow-hidden shadow">
+                                    <img src="{{ asset('storage/atomic-habits.png') }}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Atomic+Habits'">
                                 </div>
                                 <div class="flex flex-col justify-center">
                                     <h5 class="text-gray-900 dark:text-white font-medium line-clamp-1">Atomic Habits</h5>
@@ -182,12 +171,12 @@
                             </div>
                             
                             <div class="flex gap-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition cursor-pointer">
-                                <div class="w-16 h-20 bg-gray-300 dark:bg-gray-600 rounded shrink-0 overflow-hidden">
-                                    <div class="w-full h-full bg-gray-400 flex items-center justify-center text-white text-xs">Cover</div>
+                                <div class="w-16 h-20 bg-gray-300 dark:bg-gray-600 rounded shrink-0 overflow-hidden shadow">
+                                    <img src="{{ asset('storage/database.jpg') }}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Database+Systems'">
                                 </div>
                                 <div class="flex flex-col justify-center">
-                                    <h5 class="text-gray-900 dark:text-white font-medium line-clamp-1">Design Patterns</h5>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Erich Gamma</p>
+                                    <h5 class="text-gray-900 dark:text-white font-medium line-clamp-1">Database Systems</h5>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Carlos Coronel</p>
                                     <div class="text-xs text-indigo-500">Lihat Detail &rarr;</div>
                                 </div>
                             </div>
@@ -195,12 +184,10 @@
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN (1/3 width) -->
                 <div class="lg:col-span-1 space-y-6">
                     
-                    <!-- 5. Notification / Reminder (Based on $nextDueLoan) -->
                     @if(isset($nextDueLoan) && $nextDueLoan)
-                        <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-500/30 rounded-lg p-4">
+                        <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-500/30 rounded-lg p-4 shadow-sm">
                             <div class="flex gap-3">
                                 <i class="fa-solid fa-bell text-indigo-600 dark:text-indigo-400 mt-1"></i>
                                 <div>
@@ -213,7 +200,6 @@
                         </div>
                     @endif
 
-                    <!-- 6. Quick Actions -->
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
                         <div class="p-6">
                             <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Aksi Cepat</h4>
@@ -240,22 +226,30 @@
                         </div>
                     </div>
 
-                    <!-- 7. Mini Calendar (Visual Only) -->
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
                         <div class="p-6">
-                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ now()->format('F Y') }}</h4>
-                            <div class="grid grid-cols-7 gap-1 text-center text-xs">
-                                <div class="text-gray-400 py-1">M</div>
+                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 uppercase text-center text-xs tracking-widest">{{ now()->translatedFormat('F Y') }}</h4>
+                            <div class="grid grid-cols-7 gap-1 text-center text-[10px]">
+                                <div class="text-red-500 py-1 font-bold">M</div>
                                 <div class="text-gray-400 py-1">S</div>
                                 <div class="text-gray-400 py-1">S</div>
                                 <div class="text-gray-400 py-1">R</div>
                                 <div class="text-gray-400 py-1">K</div>
                                 <div class="text-gray-400 py-1">J</div>
-                                <div class="text-gray-400 py-1">S</div>
+                                <div class="text-gray-400 py-1 text-indigo-400">S</div>
 
-                                {{-- Simple Logic to simulate calendar days --}}
-                                @for($i = 1; $i <= 30; $i++)
-                                    <div class="{{ $i == now()->day ? 'bg-indigo-600 text-white rounded-full' : 'text-gray-600 dark:text-gray-300' }} py-1">
+                                @php
+                                    $startOfMonth = now()->startOfMonth();
+                                    $daysInMonth = now()->daysInMonth;
+                                    $dayOfWeek = $startOfMonth->dayOfWeek;
+                                @endphp
+
+                                @for($i = 0; $i < $dayOfWeek; $i++)
+                                    <div></div>
+                                @endfor
+
+                                @for($i = 1; $i <= $daysInMonth; $i++)
+                                    <div class="py-1 {{ $i == now()->day ? 'bg-indigo-600 text-white rounded-full font-bold shadow-sm' : 'text-gray-600 dark:text-gray-300' }}">
                                         {{ $i }}
                                     </div>
                                 @endfor

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Book;
-use APp\Models\Category;
+use App\Models\Category;
 
 class BookController extends Controller
 {
@@ -50,10 +51,10 @@ class BookController extends Controller
     public function show(Book $book)
     {
         $book->load(['reviews.user', 'category']);
-        
+
         $userReview = null;
-        if (auth()->check()) {
-            $userReview = $book->reviews()->where('user_id', auth()->id())->first();
+        if (Auth::check()) {
+            $userReview = $book->reviews()->where('user_id', Auth::id())->first();
         }
 
         return view('books.show', compact('book', 'userReview'));

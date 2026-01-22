@@ -15,11 +15,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. Buat Akun Admin
+        User::create([
+            'name' => 'atmin',
+            'email' => 'admin@gmail.com',
+            'password' => 'atmin123',
+            'role' => 'admin', // Pastikan kolom 'role' ada di database Anda
+        ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // 2. Buat Akun Librarian (Pustakawan)
+        User::create([
+            'name' => 'librarian',
+            'email' => 'librarian@gmail.com',
+            'password' => 'perpus123',
+            'role' => 'librarian',
+        ]);
+
+        // 3. Buat Akun User Biasa (Mahasiswa)
+        User::create([
+            'name' => 'orang',
+            'email' => 'user@gmail.com',
+            'password' =>'orang123',
+            'role' => 'member',
         ]);
     }
 }
