@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
+
             <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h3 class="text-2xl font-bold text-gray-800 dark:text-white">Halo, {{ Auth::user()->name }}! 👋</h3>
@@ -15,8 +15,8 @@
                 </div>
                 <div class="w-full md:w-1/3 relative">
                     <form action="{{ route('books.index') }}" method="GET">
-                        <input type="text" name="search" 
-                            class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm" 
+                        <input type="text" name="search"
+                            class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
                             placeholder="Cari buku...">
                         <div class="absolute left-3 top-2.5 text-gray-500">
                             <i class="fa-solid fa-magnifying-glass text-xs"></i>
@@ -76,80 +76,80 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
+
                 <div class="lg:col-span-2 space-y-6">
-                    
+
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
                         <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                             <h4 class="text-lg font-semibold text-gray-900 dark:text-white">Peminjaman Aktif</h4>
                             <a href="{{ route('loans.index') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">Lihat Semua</a>
                         </div>
-                        
+
                         <div class="p-0">
                             @if($currentLoans->isEmpty())
-                                <div class="p-6 text-center text-gray-500 dark:text-gray-400">
-                                    <p class="mb-2">Anda tidak sedang meminjam buku apapun.</p>
-                                    <a href="{{ route('books.index') }}" class="text-indigo-500 hover:underline">Jelajahi Katalog &rarr;</a>
-                                </div>
+                            <div class="p-6 text-center text-gray-500 dark:text-gray-400">
+                                <p class="mb-2">Anda tidak sedang meminjam buku apapun.</p>
+                                <a href="{{ route('books.index') }}" class="text-indigo-500 hover:underline">Jelajahi Katalog &rarr;</a>
+                            </div>
                             @else
-                                <div class="overflow-x-auto">
-                                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                        <thead class="text-xs text-gray-700 dark:text-gray-400 uppercase bg-gray-50 dark:bg-gray-700/50">
-                                            <tr>
-                                                <th scope="col" class="px-6 py-3">Buku</th>
-                                                <th scope="col" class="px-6 py-3 hidden sm:table-cell">Jatuh Tempo</th>
-                                                <th scope="col" class="px-6 py-3">Status</th>
-                                                <th scope="col" class="px-6 py-3 text-right">Aksi</th>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                    <thead class="text-xs text-gray-700 dark:text-gray-400 uppercase bg-gray-50 dark:bg-gray-700/50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3">Buku</th>
+                                            <th scope="col" class="px-6 py-3 hidden sm:table-cell">Jatuh Tempo</th>
+                                            <th scope="col" class="px-6 py-3">Status</th>
+                                            <th scope="col" class="px-6 py-3 text-right">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($currentLoans as $loan)
+                                        @php
+                                        $dueDate = \Carbon\Carbon::parse($loan->due_date);
+                                        $daysLeft = now()->diffInDays($dueDate, false);
+
+                                        if ($daysLeft < 0) {
+                                            $statusClass='bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 border-red-200 dark:border-red-800' ;
+                                            $statusText='Terlambat' ;
+                                            } elseif ($daysLeft < 3) {
+                                            $statusClass='bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800' ;
+                                            $statusText=$daysLeft . ' Hari Lagi' ;
+                                            } else {
+                                            $statusClass='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 border-green-200 dark:border-green-800' ;
+                                            $statusText='Aman' ;
+                                            }
+                                            @endphp
+                                            <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-10 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden shrink-0 shadow-sm border border-gray-100 dark:border-gray-700">
+                                                        @if($loan->book->cover_path)
+                                                        <img src="{{ asset('storage/' . $loan->book->cover_path) }}"
+                                                            alt="{{ $loan->book->title }}"
+                                                            class="w-full h-full object-cover">
+                                                        @else
+                                                        <div class="flex items-center justify-center h-full text-[10px] text-gray-500">No Img</div>
+                                                        @endif
+                                                    </div>
+                                                    <span class="line-clamp-1">{{ $loan->book->title }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 hidden sm:table-cell">
+                                                {{ $dueDate->format('d M Y') }}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="{{ $statusClass }} text-xs font-medium px-2.5 py-0.5 rounded border">
+                                                    {{ $statusText }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <a href="{{ route('books.index') }}?search={{ urlencode($loan->book->title) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Detail</a>
+                                            </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($currentLoans as $loan)
-                                                @php
-                                                    $dueDate = \Carbon\Carbon::parse($loan->due_date);
-                                                    $daysLeft = now()->diffInDays($dueDate, false);
-                                                    
-                                                    if ($daysLeft < 0) {
-                                                        $statusClass = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 border-red-200 dark:border-red-800';
-                                                        $statusText = 'Terlambat';
-                                                    } elseif ($daysLeft < 3) {
-                                                        $statusClass = 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800';
-                                                        $statusText = $daysLeft . ' Hari Lagi';
-                                                    } else {
-                                                        $statusClass = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 border-green-200 dark:border-green-800';
-                                                        $statusText = 'Aman';
-                                                    }
-                                                @endphp
-                                                <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-                                                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                                                        <div class="flex items-center gap-3">
-                                                            <div class="w-8 h-10 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden shrink-0 shadow-sm border border-gray-100 dark:border-gray-700">
-                                                                @if($loan->book->cover_path)
-                                                                    <img src="{{ asset('storage/' . $loan->book->cover_path) }}" 
-                                                                         alt="{{ $loan->book->title }}" 
-                                                                         class="w-full h-full object-cover">
-                                                                @else
-                                                                    <div class="flex items-center justify-center h-full text-[10px] text-gray-500">No Img</div>
-                                                                @endif
-                                                            </div>
-                                                            <span class="line-clamp-1">{{ $loan->book->title }}</span>
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4 hidden sm:table-cell">
-                                                        {{ $dueDate->format('d M Y') }}
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <span class="{{ $statusClass }} text-xs font-medium px-2.5 py-0.5 rounded border">
-                                                            {{ $statusText }}
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-4 text-right">
-                                                        <a href="{{ route('books.index') }}?search={{ urlencode($loan->book->title) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Detail</a>
-                                                    </td>
-                                                </tr>
                                             @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                                    </tbody>
+                                </table>
+                            </div>
                             @endif
                         </div>
                     </div>
@@ -161,7 +161,10 @@
                         <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="flex gap-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition cursor-pointer">
                                 <div class="w-16 h-20 bg-gray-300 dark:bg-gray-600 rounded shrink-0 overflow-hidden shadow">
-                                    <img src="{{ asset('storage/atomic-habits.png') }}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Atomic+Habits'">
+                                    <img
+                                        src="{{ Storage::url('atomic-habits.png') }}"
+                                        class="w-full h-full object-cover"
+                                        onerror="this.src='https://via.placeholder.com/150x200?text=Atomic+Habits'">
                                 </div>
                                 <div class="flex flex-col justify-center">
                                     <h5 class="text-gray-900 dark:text-white font-medium line-clamp-1">Atomic Habits</h5>
@@ -169,10 +172,13 @@
                                     <div class="text-xs text-indigo-500">Lihat Detail &rarr;</div>
                                 </div>
                             </div>
-                            
+
                             <div class="flex gap-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition cursor-pointer">
                                 <div class="w-16 h-20 bg-gray-300 dark:bg-gray-600 rounded shrink-0 overflow-hidden shadow">
-                                    <img src="{{ asset('storage/database.jpg') }}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Database+Systems'">
+                                    <img
+                                        src="{{ Storage::url('database.jpg') }}"
+                                        class="w-full h-full object-cover"
+                                        onerror="this.src='https://via.placeholder.com/150x200?text=Database'">
                                 </div>
                                 <div class="flex flex-col justify-center">
                                     <h5 class="text-gray-900 dark:text-white font-medium line-clamp-1">Database Systems</h5>
@@ -185,19 +191,19 @@
                 </div>
 
                 <div class="lg:col-span-1 space-y-6">
-                    
+
                     @if(isset($nextDueLoan) && $nextDueLoan)
-                        <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-500/30 rounded-lg p-4 shadow-sm">
-                            <div class="flex gap-3">
-                                <i class="fa-solid fa-bell text-indigo-600 dark:text-indigo-400 mt-1"></i>
-                                <div>
-                                    <h5 class="text-gray-900 dark:text-white font-medium text-sm">Pengingat!</h5>
-                                    <p class="text-gray-600 dark:text-indigo-200 text-xs mt-1">
-                                        Buku <strong>"{{ $nextDueLoan->book->title }}"</strong> harus dikembalikan pada {{ $nextDueLoan->due_date->format('d M') }}.
-                                    </p>
-                                </div>
+                    <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-500/30 rounded-lg p-4 shadow-sm">
+                        <div class="flex gap-3">
+                            <i class="fa-solid fa-bell text-indigo-600 dark:text-indigo-400 mt-1"></i>
+                            <div>
+                                <h5 class="text-gray-900 dark:text-white font-medium text-sm">Pengingat!</h5>
+                                <p class="text-gray-600 dark:text-indigo-200 text-xs mt-1">
+                                    Buku <strong>"{{ $nextDueLoan->book->title }}"</strong> harus dikembalikan pada {{ $nextDueLoan->due_date->format('d M') }}.
+                                </p>
                             </div>
                         </div>
+                    </div>
                     @endif
 
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
@@ -239,27 +245,28 @@
                                 <div class="text-gray-400 py-1 text-indigo-400">S</div>
 
                                 @php
-                                    $startOfMonth = now()->startOfMonth();
-                                    $daysInMonth = now()->daysInMonth;
-                                    $dayOfWeek = $startOfMonth->dayOfWeek;
+                                $startOfMonth = now()->startOfMonth();
+                                $daysInMonth = now()->daysInMonth;
+                                $dayOfWeek = $startOfMonth->dayOfWeek;
                                 @endphp
 
                                 @for($i = 0; $i < $dayOfWeek; $i++)
-                                    <div></div>
-                                @endfor
-
-                                @for($i = 1; $i <= $daysInMonth; $i++)
-                                    <div class="py-1 {{ $i == now()->day ? 'bg-indigo-600 text-white rounded-full font-bold shadow-sm' : 'text-gray-600 dark:text-gray-300' }}">
-                                        {{ $i }}
-                                    </div>
-                                @endfor
+                                    <div>
                             </div>
-                        </div>
-                    </div>
+                            @endfor
 
+                            @for($i = 1; $i <= $daysInMonth; $i++)
+                                <div class="py-1 {{ $i == now()->day ? 'bg-indigo-600 text-white rounded-full font-bold shadow-sm' : 'text-gray-600 dark:text-gray-300' }}">
+                                {{ $i }}
+                        </div>
+                        @endfor
+                    </div>
                 </div>
             </div>
 
         </div>
+    </div>
+
+    </div>
     </div>
 </x-app-layout>
