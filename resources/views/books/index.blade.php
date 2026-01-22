@@ -13,17 +13,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            @if(session('success'))
-                <div class="mb-4 p-4 bg-green-500 text-white rounded-lg shadow-md flex items-center">
-                    <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="mb-4 p-4 bg-red-500 text-white rounded-lg shadow-md flex items-center">
-                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> {{ session('error') }}
-                </div>
-            @endif
 
             <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
                 <form method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
