@@ -54,17 +54,10 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                'adminOnly',
             ])
             ->authMiddleware([
                 Authenticate::class,
             ]);
     }
-
-    public static function canAccess(): bool
-    {
-        return auth()->user()->role === 'admin';
-    }
-
     
 }

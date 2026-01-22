@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'atmin',
             'email' => 'admin@gmail.com',
-            'password' => 'atmin123',
+            'password' => bcrypt('atmin123'),
             'role' => 'admin', // Pastikan kolom 'role' ada di database Anda
         ]);
 
@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'librarian',
             'email' => 'librarian@gmail.com',
-            'password' => 'perpus123',
+            'password' => bcrypt('perpus123'),
             'role' => 'librarian',
         ]);
 
@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'orang',
             'email' => 'user@gmail.com',
-            'password' =>'orang123',
+            'password' => bcrypt('orang123'),
             'role' => 'member',
         ]);
     }

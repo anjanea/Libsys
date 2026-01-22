@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Loan;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use phpDocumentor\Reflection\File;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -25,17 +28,13 @@ class User extends Authenticatable
         'role',
     ];
 
-    public function isAdmin()
+    public function canAccessPanel(Panel $panel): bool
     {
-        return $this->role === 'admin';
-    }
-    public function isLibrarian()
-    {
-        return $this->role === 'librarian';
-    }
-    public function isMember()
-    {
-        return $this->role === 'member';
+        return match ($panel->getId()) {
+            'admin'     => $this->role === 'admin',
+            'librarian' => $this->role === 'librarian',
+            default     => false,
+        };
     }
 
     public function loans()

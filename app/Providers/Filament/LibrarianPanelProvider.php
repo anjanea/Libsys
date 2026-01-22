@@ -47,15 +47,9 @@ class LibrarianPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                'librarianOnly',
             ])
             ->authMiddleware([
                 Authenticate::class,
             ]);
-    }
-
-    public static function canAccess(): bool
-    {
-        return auth()->user()->role === 'librarian';
     }
 }
